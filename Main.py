@@ -16,6 +16,7 @@ import areaRando
 from romWriter import RomWriter
 from solver import solve
 
+
 def plmidFromHiddenness(itemArray, hiddenness, visible = True) -> bytes:
     if hiddenness == "open":
         plmid = itemArray[1]
