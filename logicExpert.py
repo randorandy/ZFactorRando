@@ -461,7 +461,7 @@ location_logic: LocationLogicType = {
     "Bomb Torizo Bombs": lambda loadout: (
         (Morph in loadout) and
         (pinkDoor in loadout) and
-        (canUseBombs in loadout)
+        (Bombs in loadout)
     ),
     "Varia Elevator Top Missile": lambda loadout: (
         (leftSideCrateria in loadout) and
