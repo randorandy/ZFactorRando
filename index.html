@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Z-Factor Rando</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <script src='index.js'></script>
+</head>
+<body>
+        <label for="rom">Z-Factor rom</label>
+        <input type="file" id="rom" name="rom" accept=".sfc, .smc" />
+    </div>
+    <div>
+        <input type="checkbox" id="visibility" checked="true"/>
+        <label for="visibility"
+               title="Make all items appear OPEN, with no items in a chozo or hidden. Does not affect logic."
+        >All Items OPEN Visibility (disable to have chozo orb and hidden items)</label>
+    </div>
+    <div>
+        <button id="roll-button">roll</button><br /><span>Generation can take up to 90 seconds, and your browser might stop responding.</span>
+    </div>
+    <div id="status"></div>
+    <py-config>
+        [[fetch]]
+        files = ["areaRando.py", "connection_data.py", "door_logic.py",
+                 "fillAssumed.py", "fillInterface.py",
+                 "item_data.py", "game.py", "loadout.py", "location_data.py",
+                 "logicCommon.py", "logicInterface.py", "logic_shortcut.py", 
+                 "logic_updater.py", "romWriter.py", "solver.py", 
+                 "zf2.csv", "Main.py", "logicExpert.py"]
+    </py-config>
+    <py-script src="./index.py"></py-script>
+</body>
+</html>
