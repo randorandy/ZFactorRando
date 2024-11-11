@@ -102,9 +102,9 @@ function setup_roll_button() {
             roll_button.disabled = false;
             return;
         }
-        await sleep(0.01)
+        await sleep(0.1)
         python_roll2_function(JSON.stringify(params));
-        await sleep(0.01)
+        await sleep(0.1)
         const roll3_success = python_roll3_function();
         if (! roll3_success) {
             console.log("roll3 failed");
@@ -112,19 +112,19 @@ function setup_roll_button() {
             roll_button.disabled = false;
             return;
         }
-        await sleep(0.01);
+        await sleep(0.1);
         python_roll4_function();
-        await sleep(0.01);
+        await sleep(0.1);
 
         if (modified_rom_data.length) {
-            await sleep(0.01);
+            await sleep(0.1);
             const data_blob = b64toBlob(modified_rom_data);
-            await sleep(0.01);
+            await sleep(0.1);
 
             // rom download link
             const a = document.createElement("a");
             a.href = URL.createObjectURL(data_blob);
-            await sleep(0.01);
+            await sleep(0.1);
             const filename = rom_name || "SubFileNameError.sfc";
             console.log(filename);
             a.setAttribute("download", filename);
