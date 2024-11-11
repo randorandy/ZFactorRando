@@ -1,3 +1,4 @@
+import time
 import random
 import sys
 from typing import Literal, Optional, Type
@@ -173,6 +174,7 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
     romWriter.writeBytes(0x7813b, b"\xbf")
 
     romWriter.finalizeRom(rom1_path)
+    time.sleep(0.1)
 
     patches_list = ["Patches/Level Patch.IPS",
                     "Patches/Zebes Awakens Patch.IPS",
@@ -180,7 +182,9 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
                     "Patches/Disable Suit Animation.IPS",
                     "Patches/JAMMorphingBallFix.IPS"]
     for patch_path in patches_list :
+        print("Applying patch: ",patch_path)
         ipspatch.apply_patch(rom1_path,patch_path)
+        time.sleep(0.1)
 
     print("Done!")
     print(f"Filename is {rom_name}")
@@ -284,7 +288,6 @@ def forward_fill(game: Game,
 
 
 if __name__ == "__main__":
-    import time
     t0 = time.perf_counter()
     Main(sys.argv)
     t1 = time.perf_counter()
