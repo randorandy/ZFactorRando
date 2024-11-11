@@ -15,6 +15,7 @@ import fillAssumed
 import areaRando
 from romWriter import RomWriter
 from solver import solve
+import ipspatch
 
 
 def plmidFromHiddenness(itemArray, hiddenness, visible = True) -> bytes:
@@ -158,12 +159,7 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
     for loc in game.all_locations.values():
         write_location(romWriter, loc, game.visibility)
     
-    # Morph Ball Fix
-    romWriter.writeBytes(0x268ce, b"\x04")
-    romWriter.writeBytes(0x26e02, b"\x04")
-
-    # Suit animation skip patch
-    romWriter.writeBytes(0x20717, b"\xea\xea\xea\xea")
+    
     
     # Remove gravity suit heat protection #test
     romWriter.writeBytes(0x6e37d, b"\x01")
@@ -176,11 +172,15 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
     romWriter.writeBytes(0x7812b, b"\x09\x03\x70")
     romWriter.writeBytes(0x7813b, b"\xbf")
 
-    # maridia escape patch
-    romWriter.writeBytes(0x7b12c, b"\x24\xf9")
-    romWriter.writeBytes(0x7f924, b"\x83\xEF\x3c\x14\x12\x00\x83\xEF\x3d\x14\x12\x00\x83\xEF\x3e\x14\x12\x00\x83\xEF\x3f\x14\x12\x00\x83\xEF\x40\x14\x12\x00\x83\xEF\x41\x14\x12\x00\x83\xEF\x42\x14\x12\x00\x83\xef\x45\x15\x12\x00\x83\xef\x46\x15\x12\x00\x83\xef\x47\x15\x12\x00\x83\xef\x48\x15\x12\x00\x83\xef\x49\x15\x12\x00\x00\x00")
-
     romWriter.finalizeRom(rom1_path)
+
+    patches_list = ["Patches/Level Patch.IPS",
+                    "Patches/Zebes Awakens Patch.IPS",
+                    "Patches/max_ammo_display.ips",
+                    "Patches/Disable Suit Animation.IPS",
+                    "Patches/JAMMorphingBallFix.IPS"]
+    for patch_path in patches_list :
+        ipspatch.apply_patch(rom1_path,patch_path)
 
     print("Done!")
     print(f"Filename is {rom_name}")
