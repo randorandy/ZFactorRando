@@ -178,12 +178,11 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
                     "Patches/max_ammo_display.ips",
                     "Patches/Disable Suit Animation.IPS",
                     "Patches/JAMMorphingBallFix.IPS"]
-    for patch_path in patches_list :
-        print("Applying patch: ",patch_path)
-        this_patch_path = patch_path
+    for this_patch_path in patches_list :
+        print("Applying patch: ",this_patch_path)
         with open(this_patch_path, 'rb') as file:
             this_patch_data = file.read()
-        ips.patch(romWriter.rom_data,this_patch_data)
+        romWriter.rom_data = ips.patch(romWriter.rom_data,this_patch_data)
         time.sleep(0.01)
 
     romWriter.finalizeRom(rom1_path)
