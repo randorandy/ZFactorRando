@@ -16,7 +16,7 @@ import fillAssumed
 import areaRando
 from romWriter import RomWriter
 from solver import solve
-import ipspatch
+import ips
 
 
 def plmidFromHiddenness(itemArray, hiddenness, visible = True) -> bytes:
@@ -173,9 +173,6 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
     romWriter.writeBytes(0x7812b, b"\x09\x03\x70")
     romWriter.writeBytes(0x7813b, b"\xbf")
 
-    romWriter.finalizeRom(rom1_path)
-    time.sleep(0.1)
-
     patches_list = ["Patches/Level Patch.IPS",
                     "Patches/Zebes Awakens Patch.IPS",
                     "Patches/max_ammo_display.ips",
@@ -183,8 +180,13 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
                     "Patches/JAMMorphingBallFix.IPS"]
     for patch_path in patches_list :
         print("Applying patch: ",patch_path)
-        ipspatch.apply_patch(rom1_path,patch_path)
-        time.sleep(0.1)
+        this_patch_path = patch_path
+        with open(this_patch_path, 'rb') as file:
+            this_patch_data = file.read()
+        ips.patch(romWriter.rom_data,this_patch_data)
+        time.sleep(0.01)
+
+    romWriter.finalizeRom(rom1_path)
 
     print("Done!")
     print(f"Filename is {rom_name}")
