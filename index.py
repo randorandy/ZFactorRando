@@ -3,6 +3,7 @@
 import json
 from typing import Any, Literal, Optional, TypedDict
 
+from pyscript import document  # type: ignore
 # pyscript library
 import js  # type: ignore
 
@@ -10,8 +11,8 @@ from game import Game, GameOptions
 from romWriter import RomWriter
 from Main import generate, get_spoiler, write_rom
 
-Element: Any  # pyscript built-in
-
+document: Any = document  # TODO: type stubs
+js: Any = js
 
 
 class WebParams(TypedDict):
@@ -79,3 +80,9 @@ def roll4() -> None:
         js.spoiler_text = get_spoiler(game)
     else:
         js.modified_rom_data = ""
+
+js.python_get_logic_str = get_logic_str
+js.python_roll1_function = roll1
+js.python_roll2_function = roll2
+js.python_roll3_function = roll3
+js.python_roll4_function = roll4
