@@ -81,7 +81,6 @@ def roll4() -> None:
     else:
         js.modified_rom_data = ""
 
-js.python_get_logic_str = get_logic_str
 js.python_roll1_function = roll1
 js.python_roll2_function = roll2
 js.python_roll3_function = roll3
