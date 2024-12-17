@@ -3,41 +3,187 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Z-Factor Rando</title>
+    <title>Subversion Rando</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
     <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
     <script src='index.js'></script>
 </head>
 <body>
-        <label for="rom">Z-Factor rom</label>
+    <div>
+        <label for="rom">original Super Metroid rom or Subversion 1.2 rom</label>
         <input type="file" id="rom" name="rom" accept=".sfc, .smc" />
     </div>
     <div>
-        <input type="checkbox" id="visibility" checked="true"/>
-        <label for="visibility"
-               title="Make all items appear OPEN, with no items in a chozo or hidden. Does not affect logic."
-        >All Items OPEN Visibility (disable to have chozo orb and hidden items)</label>
+        <ul>
+            <li>
+            The logic assumes you pick up everything you can from the space port before falling from the space port.
+            <br>
+            So if you don't pick up everything you can before you free fall, you might be stuck.
+            </li>
+            <li>Turning the power off is never in logic, unless you can turn it back on before you leave the Geothermal Energy Plant.</li>
+            <li>
+            All the logic is symmetrical. This means getting out is required to go in.
+            <br>
+            For example, Speed Booster cannot be at the vanilla Speed Booster location, because it requires Speed Booster to get out.
+            <br>
+            If you can't get out of a location, you shouldn't go in, because you might be soft-locked.
+            </li>
+        </ul>
     </div>
+    <div>
+        <span>logic presets:</span>
+        <span id="preset-buttons"></span>
+    </div>
+    <div>
+        <div>
+            <button id="collapse-control">customize logic</button>
+            <button id="logic-str-btn" style="margin-left: 30px;">get custom logic string</button>
+            <span id="logic-str-out" style="margin-left: 30px;"></span>
+        </div>
+        <div id="trick-container" style="box-shadow:inset 2px 4px 14px #555;">
+            <table id="tricks"></table>
+        </div> 
+    </div>
+    <div>
+        <label for="fill">fill:</label>
+
+        <select name="fill" id="fill">
+            <option value="D" selected="selected"
+                    title="Any item can be in any location within logic."
+            >full random</option>
+            <option value="B"
+                    title="Unique item locations are more likely to have unique items, but it's not 100%. &#013;This is only unique items, and not energy tanks. &#013; &#013;The hint system is modified in this mode to try to hint an important minor location."
+            >major/minor bias</option>
+            <option value="MM"
+                    title="Places Unique+Energy items at the Unique+Energy locations. 23 unique and 16 energy locations in all."
+            >major/minor</option>
+        </select> 
+    </div>
+    <div>
+        <input type="checkbox" id="area-rando"/>
+        <label for="area-rando"
+               title="Logically shuffles the major areas of the game and places items in logical places according to the door placement."
+        >area rando</label>
+        <input type="checkbox" id="small-spaceport" checked="true"/>
+        <label for="small-spaceport"
+               title="This removes some rooms from the spaceport so you don't have to run around as much at the beginning of the seed. &#013; &#013;This also reduces the missile requirements for zebetites, pink doors, and eye doors."
+        >small spaceport</label>
+        <input type="checkbox" id="escape-shortcuts"/>
+        <label for="escape-shortcuts"
+               title="The paths during escape sequences are shortened. &#013; &#013;In area rando, the final escape sequence is never shortened. &#013;   (Part of the fun of area rando is finding your way out.)"
+        >escape shortcuts</label>
+    </div>
+    <div>
+        <input type="checkbox" id="daphne-gate"/>
+        <label for="daphne-gate"
+               title="Changes the Screw Attack blocks in the Wrecked Air Lock to two different kinds of blocks, so you will need 1 of two random items to enter the final area (instead of the normal Screw Attack requirement). &#013; &#013;The items that will let you through the gate are displayed in the Air Lock before it is crashed."
+        >randomize wrecked daphne gate</label>
+    </div>
+    <div>
+        <label for="cypher" title="This affects objective rando and 2 items.">Thunder Laboratory has:</label>
+
+        <select name="cypher" id="cypher" title="This affects objective rando and 2 items.">
+            <option value="Anything">Anything</option>
+            <option value="NotRequired" selected="selected">Something not required</option>
+            <option value="SmallAmmo">Small Ammo Tanks</option>
+        </select> 
+    </div>
+    <div>
+        Item Markers:
+        <label title="Items are marked on the map as large hollow dots.">
+            <input type="radio" name="item_markers" value="Simple" checked> Simple
+        </label>
+        <label title="Unique items are marked with large solid dots. Ammo tanks are marked with small dots. Everything else is marked with large hollow dots.">
+            <input type="radio" name="item_markers" value="ThreeTiered"> 3-Tiered
+        </label>
+    </div>
+    <div>
+        <label for="objective-rando"
+               title="Accessing map stations will reveal one of the objectives. The objectives are tracked in the Logbook Mission page. &#013; &#013;Crashing the space port is not required unless it is chosen as one of the objectives. &#013;(The GFS Daphne will be both docked at the space port and crashed on the planet at the same time.) &#013; &#013;The Power Bomb requirement to get to the wrecked Weapon Control Center is also removed."
+        >randomized objectives</label>
+        <input type="checkbox" id="objective-rando"/>
+        <span id="objective-count-span" style="display: none;">
+            <input type="range" id="objective-count" name="objective-count" min="1" max="10" value="5" />
+            <label for="objective-count" id="objective-count-label">5 objectives</label>
+        </span>
+    </div>
+    <div hidden>  <!-- auto-enabled in objective rando - see if there's demand to display this separate option -->
+        <input type="checkbox" id="skip-crash-space-port"/>
+        <label for="skip-crash-space-port"
+               title="Crashing the space port is not required unless it is chosen as one of the objectives. &#013;(The GFS Daphne will be both docked at the space port and crashed on the planet at the same time.) &#013; &#013;The Power Bomb requirement to get to the wrecked Weapon Control Center is also removed."
+        >skip crash space port</label>
+    </div>
+
     <div>
         <button id="roll-button">roll</button><br /><span>Generation can take up to 90 seconds, and your browser might stop responding.</span>
     </div>
     <div id="status"></div>
     <py-config>
+        terminal = true
+        docked = false
         [[fetch]]
-        files = ["areaRando.py", "connection_data.py", "door_logic.py",
-                 "fillAssumed.py", "fillInterface.py",
-                 "item_data.py", "game.py", "loadout.py", "location_data.py",
-                 "logicCommon.py", "logicInterface.py", "logic_shortcut.py", 
-                 "logic_updater.py", "romWriter.py", "solver.py", 
-                 "zf2.csv", "Main.py", "logicExpert.py",
-                 "ips.py",
-                 "Patches/Disable Suit Animation.IPS",
-                 "Patches/JAMMorphingBallFix.IPS",
-                 "Patches/Level Patch.IPS",
-                 "Patches/max_ammo_display.ips",
-                 "Patches/Zebes Awakens Patch.IPS"]
+        from = "./src"
+        files = [
+            "subversion_rando/__init__.py",
+            "subversion_rando/areaRando.py",
+            "subversion_rando/area_rando_types.py",
+            "subversion_rando/connection_data.py",
+            "subversion_rando/daphne_gate.py",
+            "subversion_rando/daphne_gate_types.py",
+            "subversion_rando/door_logic.py",
+            "subversion_rando/fillAssumed.py",
+            "subversion_rando/fillForward.py",
+            "subversion_rando/fillInterface.py",
+            "subversion_rando/fillMajorMinor.py",
+            "subversion_rando/fillMedium.py",
+            "subversion_rando/fillSpeedrun.py",
+            "subversion_rando/game.py",
+            "subversion_rando/goal.py",
+            "subversion_rando/goals.py",
+            "subversion_rando/hint_types.py",
+            "subversion_rando/hints.py",
+            "subversion_rando/ips.py",
+            "subversion_rando/item_data.py",
+            "subversion_rando/item_marker.py",
+            "subversion_rando/loadout.py",
+            "subversion_rando/location_data.py",
+            "subversion_rando/location_weights.py",
+            "subversion_rando/logicCommon.py",
+            "subversion_rando/logicInterface.py",
+            "subversion_rando/logic_area.py",
+            "subversion_rando/logic_area_shortcuts.py",
+            "subversion_rando/logic_boss_kill.py",
+            "subversion_rando/logic_boss_reach.py",
+            "subversion_rando/logic_goal.py",
+            "subversion_rando/logic_locations.py",
+            "subversion_rando/logic_presets.py",
+            "subversion_rando/logic_shortcut.py",
+            "subversion_rando/logic_shortcut_data.py",
+            "subversion_rando/logic_updater.py",
+            "subversion_rando/main_generation.py",
+            "subversion_rando/map_icon_data.py",
+            "subversion_rando/new_terrain_writer.py",
+            "subversion_rando/objective_rando.ips",
+            "subversion_rando/open_escape.ips",
+            "subversion_rando/open_escape.py",
+            "subversion_rando/romWriter.py",
+            "subversion_rando/solver.py",
+            "subversion_rando/spaceport_door_data.py",
+            "subversion_rando/subversion_patch.py",
+            "subversion_rando/subversiondata12.csv",
+            "subversion_rando/terrain_patch.py",
+            "subversion_rando/terrain_patch_data.py",
+            "subversion_rando/tracker_logic.py",
+            "subversion_rando/trick.py",
+            "subversion_rando/trick_data.py"
+        ]
+        [[fetch]]
+        from = "https://edit-sm.art/subversion/patches"
+        files = [
+            "subversion.1.2.ips"
+        ]
     </py-config>
-    <py-script src="./index.py"></py-script>
+    <py-script src="./src/index.py"></py-script>
 </body>
 </html>
