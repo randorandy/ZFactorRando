@@ -91,10 +91,10 @@ function setup_roll_button() {
         const status_div = document.getElementById("status");
         status_div.innerText = "rolling...";
         await sleep(0.01);
-        //const python_roll1_function = pyscript.interpreter.globals.get('roll1');
-        //const python_roll2_function = pyscript.interpreter.globals.get('roll2');
-        //const python_roll3_function = pyscript.interpreter.globals.get('roll3');
-        //const python_roll4_function = pyscript.interpreter.globals.get('roll4');
+        const python_roll1_function = pyscript.interpreter.globals.get('roll1');
+        const python_roll2_function = pyscript.interpreter.globals.get('roll2');
+        const python_roll3_function = pyscript.interpreter.globals.get('roll3');
+        const python_roll4_function = pyscript.interpreter.globals.get('roll4');
         const roll1_success = python_roll1_function();
         if (! roll1_success) {
             console.log("roll1 failed");
